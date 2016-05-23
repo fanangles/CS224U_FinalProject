@@ -9,6 +9,8 @@ mask1 = T.matrix('m1')
 mask2 = T.matrix('m2')
 target_var = T.ivector('ent')
 
+
+
 # create a small convolutional neural network
 from lasagne.nonlinearities import leaky_rectify, softmax
 from lasagne.layers import InputLayer, Conv2DLayer, Pool2DLayer, LSTMLayer, ConcatLayer, DenseLayer, dropout
@@ -16,7 +18,7 @@ from lasagne.layers import InputLayer, Conv2DLayer, Pool2DLayer, LSTMLayer, Conc
 
 
 # Sequence Length
-NUM_CHARS = 36 #think about this right now.
+NUM_CHARS = 91 #think about this right now.
 #Generating 1-hot:
 # get sentence.
 # convert character into integer.
@@ -34,6 +36,18 @@ PRINT_FREQ = 1000
 NUM_EPOCHS = 50
 # Batch Size
 BATCH_SIZE = 128
+
+def char_to_onehot(char):
+    return (ord(char) - 32) % NUM_CHARS
+
+def sentence_to_onehots(sen):
+    # sentence_vector = numpy.empty(0)
+    sentence_vector = np.zeros((len(sen), NUM_CHARS))
+    for i,char in enumerate(sen):
+        onehot = char_to_onehot(char)
+        sentence_vector[i,onehot] = 1
+    return sentence_vector
+
 
 def createNeuralNetwork():
     #(batchsize, sequence length, onehot vector length)
