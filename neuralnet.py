@@ -50,11 +50,13 @@ def sentence_to_onehots(sen):
     return sentence_vector
 
 
-golds = {
-    'neutral':0,
-    'entailment':1,
-    'contradiction':2
-}
+from collections import defaultdict;
+
+golds = defaultdict(lambda: 0)
+golds['neutral'] = 0;
+golds['entailment'] = 1;
+golds['contradiction'] = 2;
+
 
 def readData(filename):
     X1 = [];
@@ -70,6 +72,10 @@ def readData(filename):
             Y.append(golds[l[0]]);
 
     return X1, X2 ,Y
+
+
+trainX1, trainX2, trainY = readData('./snli_1.0/snli_1.0_train.txt')
+print "HOLY SHIT IT READ DATA"
 
 
 def createNeuralNetwork():
@@ -150,8 +156,6 @@ print "HOLY SHIT IT COMPILED TRAINING FUNCTION"
 
 
 # train network (assuming you've got some training data in numpy arrays)
-trainX1, trainX2, trainY = readData('./snli_1.0/snli_1.0_train.txt')
-print "HOLY SHIT IT READ DATA"
 
 def makeMask(batch): #list of matricies of variable size.
     m = np.zeros((len(batch), max([b.shape[0] for b in batch])))
