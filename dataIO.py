@@ -36,7 +36,7 @@ def readChunk(batchSize, filename):
 		X2.append(x2)
 		Y.append(y)
 		if(len(X1) == batchSize):
-			yield np.array(X1),np.array(X2),np.array(Y)
+			yield (np.array(X1),np.array(X2),np.array(Y))
 			X1 = [];
 			X2 = [];
 			Y = [];
@@ -46,8 +46,8 @@ def readChunk(batchSize, filename):
 
 
 def main():
-	for x,y,z in readData('./snli_1.0/snli_1.0_train.txt'):
-		print x,y,z
+	for x,y,z in readChunk(4,'./snli_1.0/snli_1.0_train.txt'):
+		print x[3].shape
 		break;
 
 if __name__ == "__main__":

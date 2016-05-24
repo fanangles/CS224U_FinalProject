@@ -119,8 +119,9 @@ for epoch in range(kNUM_EPOCHS):
     loss = 0
     print "HOLY SHIT IT EPOCHS!"
     for batch1, batch2, ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
-        import code
-        code.interact(local=locals())
+        # import code
+        # code.interact(local=locals())
+        print batch1.shape, batch2.shape, ys.shape
         # loss += train_fn(batch1, batch2, makeMask(batch1), makeMask(batch2), ys)
         loss += train_fn(batch1, batch2, ys)
 
