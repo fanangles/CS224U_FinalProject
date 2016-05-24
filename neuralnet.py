@@ -5,10 +5,10 @@ import numpy as np;
 
 
 # create Theano variables for input and target minibatch
-sentence1 = T.tensor3('s1')
-sentence2 = T.tensor3('s2')
-mask1 = T.matrix('m1')
-mask2 = T.matrix('m2')
+sentence1 = T.ftensor3('s1')
+sentence2 = T.ftensor3('s2')
+mask1 = T.bmatrix('m1')
+mask2 = T.bmatrix('m2')
 target_var = T.ivector('ent')
 
 
@@ -35,7 +35,7 @@ def createNeuralNetwork():
         cell_init=lasagne.init.Constant(0.),
         hid_init=lasagne.init.Constant(0.), grad_clipping=kGRAD_CLIP,
         backwards=False,
-        # mask_input=l_mask1,
+        mask_input=l_mask1,
         only_return_final=True)
     lstm1_b = LSTMLayer(in1, num_LSTM_output,
         forgetgate=lasagne.layers.Gate(),
@@ -43,7 +43,7 @@ def createNeuralNetwork():
         cell_init=lasagne.init.Constant(0.),
         hid_init=lasagne.init.Constant(0.), grad_clipping=kGRAD_CLIP,
         backwards=True,
-        # mask_input=l_mask1,
+        mask_input=l_mask1,
         only_return_final=True)
 
     lstm2_f = LSTMLayer(in2, num_LSTM_output,
@@ -52,7 +52,7 @@ def createNeuralNetwork():
         cell_init=lasagne.init.Constant(0.),
         hid_init=lasagne.init.Constant(0.), grad_clipping=kGRAD_CLIP,
         backwards=False,
-        # mask_input=l_mask2,
+        mask_input=l_mask2,
         only_return_final=True)
     lstm2_b = LSTMLayer(in2, num_LSTM_output,
         forgetgate=lasagne.layers.Gate(),
@@ -60,7 +60,7 @@ def createNeuralNetwork():
         cell_init=lasagne.init.Constant(0.),
         hid_init=lasagne.init.Constant(0.), grad_clipping=kGRAD_CLIP,
         backwards=True,
-        # mask_input=l_mask2,
+        mask_input=l_mask2,
         only_return_final=True)
 
     network = ConcatLayer([lstm1_f, lstm1_b, lstm2_f, lstm2_b], axis=1) #(NONE-sentencesize by 2048)
@@ -101,8 +101,8 @@ updates = lasagne.updates.nesterov_momentum(loss, params, learning_rate=0.01,
 print "HOLY SHIT IT COMPILED UPDATES"
 
 # compile training function that updates parameters and returns training loss
-# train_fn = theano.function([sentence1, sentence2, mask1, mask2, target_var], loss, updates=updates)
-train_fn = theano.function([sentence1, sentence2, target_var], loss, updates=updates)
+train_fn = theano.function([sentence1, sentence2, mask1, mask2, target_var], loss, updates=updates, allow_input_downcast=True)
+# train_fn = theano.function([sentence1, sentence2, target_var], loss, updates=updates)
 print "HOLY SHIT IT COMPILED TRAINING FUNCTION"
 
 
@@ -118,12 +118,13 @@ def makeMask(batch): #list of matricies of variable size.
 for epoch in range(kNUM_EPOCHS):
     loss = 0
     print "HOLY SHIT IT EPOCHS!"
-    for batch1, batch2, ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
+    for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
         # import code
         # code.interact(local=locals())
-        print batch1.shape, batch2.shape, ys.shape
+        # print batch1.shape, batch2.shape, ys.shape
         # loss += train_fn(batch1, batch2, makeMask(batch1), makeMask(batch2), ys)
-        loss += train_fn(batch1, batch2, ys)
+        loss += train_fn(batch1, batch2, m1, m2, ys)
+        print "yeahhh"
 
     print("Epoch %d: Loss %g" % (epoch + 1, loss / len(training_data)))
 

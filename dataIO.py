@@ -27,28 +27,46 @@ def readData(filename):
 			l=l.strip().split("\t")
 			yield sentence_to_onehots(l[3]), sentence_to_onehots(l[4]), golds[l[0]]
 
+import itertools
+
+def padZeroes(inputList, maxlen, dtype=np.float16):
+    result = np.zeros((len(inputList), maxlen, kNUM_CHARS), dtype)
+    mask = np.zeros((len(inputList), maxlen), dtype=np.int8);
+    for i, row in enumerate(inputList):
+        for j, val in enumerate(row):
+            result[i,j,:] = val;
+            mask[i,j] = 1
+    return (result, mask)
+
 def readChunk(batchSize, filename):
-	X1 = [];
-	X2 = [];
-	Y = [];
-	for x1,x2,y in readData(filename):
-		X1.append(x1)
-		X2.append(x2)
-		Y.append(y)
-		if(len(X1) == batchSize):
-			yield (np.array(X1),np.array(X2),np.array(Y))
-			X1 = [];
-			X2 = [];
-			Y = [];
-	#last chunk.
-	yield np.array(X1),np.array(X2),np.array(Y)
+    X1 = [];
+    X2 = [];
+    Y = [];
+    maxLen1 = 0;
+    maxLen2 = 0;
+    for x1,x2,y in readData(filename): #(?,NUM_CHAR)
+        X1.append(x1)
+        X2.append(x2)
+        maxLen1 = max(len(x1), maxLen1)
+        maxLen2 = max(len(x2), maxLen2)
+        Y.append(y)
+        if(len(X1) == batchSize):
+            yield (padZeroes(X1, maxLen1),padZeroes(X2, maxLen2),np.array(Y, dtype=np.int32))
+            X1 = [];
+            X2 = [];
+            Y = [];
+            maxLen1 = 0;
+            maxLen2 = 0
+            #last chunk.
+    yield np.array(X1),np.array(X2),np.array(Y)
 
 
 
 def main():
-	for x,y,z in readChunk(4,'./snli_1.0/snli_1.0_train.txt'):
-		print x[3].shape
-		break;
+	for (x,xm),(y,ym),z in readChunk(kBATCH_SIZE,'./snli_1.0/snli_1.0_train.txt'):
+		print x.shape
+
+		# break;
 
 if __name__ == "__main__":
     main()
