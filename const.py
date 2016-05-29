@@ -1,5 +1,5 @@
 # Sequence Length
-kNUM_CHARS = 91 #think about this right now.
+kNUM_CHARS = 30 #think about this right now.
 #Generating 1-hot:
 # get sentence.
 # convert character into integer.

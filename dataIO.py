@@ -6,9 +6,16 @@ golds = defaultdict(lambda: 0)
 golds['neutral'] = 0;
 golds['entailment'] = 1;
 golds['contradiction'] = 2;
+dictString = "abcdefghijklmnopqrstuvwxyz,.?!"
+charInts = defaultdict(lambda: 0)
+
+for i, char in enumerate(dictString):
+    charInts[char] = i
+
+
 
 def char_to_onehot(char):
-    return (ord(char) - 32) % kNUM_CHARS
+    return charInts[char]
 
 def sentence_to_onehots(sen):
     # sentence_vector = numpy.empty(0)
