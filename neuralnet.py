@@ -2,6 +2,7 @@ import lasagne
 import theano
 import theano.tensor as T
 import numpy as np;
+import time
 
 
 # create Theano variables for input and target minibatch
@@ -84,6 +85,20 @@ def createNeuralNetwork():
 
 
 network = createNeuralNetwork();
+
+def loadDriverModelFromFile(filename):
+    print "Loading Neural Network Values from File"
+    _v = np.load(filename)['model']
+    lasagne.layers.set_all_param_values(network, _v)
+    if type(filename)==str:
+        print "LOADED"
+        return;
+    args.modelStoreFile.close()
+    print "Loaded!"
+
+if args is not None and args.modelStoreFile is not None:
+    loadDriverModelFromFile(args.modelStoreFile)
+
 print "HOLY SHIT IT COMPILED"
 # create loss function
 prediction = lasagne.layers.get_output(network)
@@ -127,8 +142,18 @@ for epoch in range(kNUM_EPOCHS):
         print "yeahhh"
 
     print("Epoch %d: Loss %g" % (epoch + 1, loss / len(training_data)))
+   
+    vals = lasagne.layers.get_all_param_values(network)
+    modelFile = open("modelStore/"+time.strftime("%m%d-%H%M%S")+".pkl", mode="w")    
+    np.savez(modelFile, model=vals)
+    print ">>>", modelFile.name
+    modelFile.close()
+    print "Done."
+
+
+# Save model
 
 # use trained network for predictions
 test_prediction = lasagne.layers.get_output(network, deterministic=True)
-predict_fn = theano.function([input_var], T.argmax(test_prediction, axis=1))
-print("Predicted class for first test input: %r" % predict_fn(test_data[0]))
+predict_fn = theano.function([sentence1, sentence2, mask1, mask2], T.argmax(test_prediction, axis=1))
+#print("Predicted class for first test input: %r" % predict_fn(test_data[0])) This needs to be changed
