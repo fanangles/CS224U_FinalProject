@@ -1,3 +1,13 @@
+import argparse
+
+parser = argparse.ArgumentParser(description="Trains a convolutional neural network and saves it to file")
+parser.add_argument('modelStoreFile', 
+    type=argparse.FileType('r'), nargs='?',
+    help="The file storing the saved model params to preload the model with" )
+parser.add_argument('--repl', action='store_true',
+    help="Puts the model into repl mode after setting up model.")
+args = parser.parse_args()
+
 import lasagne
 import theano
 import theano.tensor as T
@@ -86,18 +96,18 @@ def createNeuralNetwork():
 
 network = createNeuralNetwork();
 
-# def loadDriverModelFromFile(filename):
-#     print "Loading Neural Network Values from File"
-#     _v = np.load(filename)['model']
-#     lasagne.layers.set_all_param_values(network, _v)
-#     if type(filename)==str:
-#         print "LOADED"
-#         return;
-#     args.modelStoreFile.close()
-#     print "Loaded!"
+def loadDriverModelFromFile(filename):
+    print "Loading Neural Network Values from File"
+    _v = np.load(filename)['model']
+    lasagne.layers.set_all_param_values(network, _v)
+    if type(filename)==str:
+        print "LOADED"
+        return;
+    args.modelStoreFile.close()
+    print "Loaded!"
 
-# if args is not None and args.modelStoreFile is not None:
-#     loadDriverModelFromFile(args.modelStoreFile)
+if args is not None and args.modelStoreFile is not None:
+    loadDriverModelFromFile(args.modelStoreFile)
 
 print "HOLY SHIT IT COMPILED"
 # create loss function
