@@ -157,4 +157,4 @@ for epoch in range(kNUM_EPOCHS):
 # use trained network for predictions
 test_prediction = lasagne.layers.get_output(network, deterministic=True)
 predict_fn = theano.function([sentence1, sentence2, mask1, mask2], T.argmax(test_prediction, axis=1))
-print(predict_fn(test_data)) This needs to be changed
+print(predict_fn(test_data)) #This might need to be changed
