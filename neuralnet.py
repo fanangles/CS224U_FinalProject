@@ -133,7 +133,8 @@ def makeMask(batch): #list of matricies of variable size.
 for epoch in range(kNUM_EPOCHS):
     loss = 0
     print "HOLY SHIT IT EPOCHS!"
-    for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
+    #for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
+    for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_dev.txt'):
         # import code
         # code.interact(local=locals())
         # print batch1.shape, batch2.shape, ys.shape
@@ -156,4 +157,4 @@ for epoch in range(kNUM_EPOCHS):
 # use trained network for predictions
 test_prediction = lasagne.layers.get_output(network, deterministic=True)
 predict_fn = theano.function([sentence1, sentence2, mask1, mask2], T.argmax(test_prediction, axis=1))
-#print("Predicted class for first test input: %r" % predict_fn(test_data[0])) This needs to be changed
+print(predict_fn(test_data)) This needs to be changed
