@@ -75,12 +75,12 @@ def createNeuralNetwork():
         only_return_final=True)
 
     network = ConcatLayer([lstm1_f, lstm1_b, lstm2_f, lstm2_b], axis=1) #(NONE-sentencesize by 2048)
-    network = ReshapeLayer(network, (-1, 4, num_LSTM_output));
+    network = ReshapeLayer(network, (-1, 1, 4, num_LSTM_output));
     #(None by 4x512) I think.
-    network = Conv1DLayer(network, 20, 3, pad='same',
+    network = Conv2DLayer(network, 20, (3,3), pad='same',
                                          nonlinearity=leaky_rectify)
     #(20 by 4 by 52)
-    network = Conv1DLayer(network, 10, 3, pad='same',
+    network = Conv2DLayer(network, 10, (3,3), pad='same',
                                          nonlinearity=leaky_rectify)
 
     network = lasagne.layers.MaxPool1DLayer(network, 4, stride=2)
@@ -141,15 +141,19 @@ def makeMask(batch): #list of matricies of variable size.
     return m;
 
 for epoch in range(kNUM_EPOCHS):
+    batchCount = 0
     loss = 0
     print "HOLY SHIT IT EPOCHS!"
     #for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
     for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_dev.txt'):
+        if batchCount >= kMAX_BATCHES:
+            break
         # import code
         # code.interact(local=locals())
         # print batch1.shape, batch2.shape, ys.shape
         # loss += train_fn(batch1, batch2, makeMask(batch1), makeMask(batch2), ys)
         loss += train_fn(batch1, batch2, m1, m2, ys)
+        batchCount += 1
         print "yeahhh"
 
     print("Epoch %d: Loss %g" % (epoch + 1, loss / len(training_data)))
