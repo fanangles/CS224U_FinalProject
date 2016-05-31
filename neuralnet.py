@@ -86,18 +86,18 @@ def createNeuralNetwork():
 
 network = createNeuralNetwork();
 
-def loadDriverModelFromFile(filename):
-    print "Loading Neural Network Values from File"
-    _v = np.load(filename)['model']
-    lasagne.layers.set_all_param_values(network, _v)
-    if type(filename)==str:
-        print "LOADED"
-        return;
-    args.modelStoreFile.close()
-    print "Loaded!"
+# def loadDriverModelFromFile(filename):
+#     print "Loading Neural Network Values from File"
+#     _v = np.load(filename)['model']
+#     lasagne.layers.set_all_param_values(network, _v)
+#     if type(filename)==str:
+#         print "LOADED"
+#         return;
+#     args.modelStoreFile.close()
+#     print "Loaded!"
 
-if args is not None and args.modelStoreFile is not None:
-    loadDriverModelFromFile(args.modelStoreFile)
+# if args is not None and args.modelStoreFile is not None:
+#     loadDriverModelFromFile(args.modelStoreFile)
 
 print "HOLY SHIT IT COMPILED"
 # create loss function
