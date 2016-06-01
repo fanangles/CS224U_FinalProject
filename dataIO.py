@@ -26,13 +26,13 @@ def sentence_to_onehots(sen):
     return sentence_vector
 
 def readData(filename):
+    print "reading "
     #print "reading..."
     with open(filename, 'r') as f:
         f.readline();
         for l in f:
-			#print l
-			l=l.strip().split("\t")
-			yield sentence_to_onehots(l[3]), sentence_to_onehots(l[4]), golds[l[0]]
+            l=l.strip().split("\t")
+            yield sentence_to_onehots(l[3]), sentence_to_onehots(l[4]), golds[l[0]]
 
 import itertools
 
@@ -65,13 +65,16 @@ def readChunk(batchSize, filename):
             maxLen1 = 0;
             maxLen2 = 0
             #last chunk.
-    yield np.array(X1),np.array(X2),np.array(Y)
-
+    #yield (padZeroes(X1, maxLen1),padZeroes(X2, maxLen2),np.array(Y, dtype=np.int32))
+    #yield (np.array(X1), np.array(X2), np.array(Y))
 
 
 def main():
-	for (x,xm),(y,ym),z in readChunk(kBATCH_SIZE,'./snli_1.0/snli_1.0_train.txt'):
-		print x.shape
+    batch_num = 0
+    for (x,xm),(y,ym),z in readChunk(kBATCH_SIZE,'./snli_1.0/snli_1.0_dev.txt'):
+        print x.shape
+        batch_num += 1
+        print str(batch_num)
 
 		# break;
 
