@@ -83,7 +83,7 @@ def createNeuralNetwork():
     network = Conv2DLayer(network, 10, (3,3), pad='same',
                                          nonlinearity=leaky_rectify)
 
-    network = lasagne.layers.MaxPool1DLayer(network, 4, stride=2)
+    network = lasagne.layers.MaxPool2DLayer(network, (4,4), stride=2)
 
     network = DenseLayer(dropout(network, 0.5),
                                         128, nonlinearity=leaky_rectify,
@@ -145,7 +145,7 @@ for epoch in range(kNUM_EPOCHS):
     loss = 0
     print "HOLY SHIT IT EPOCHS!"
     #for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
-    for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_dev.txt'):
+    for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_train.txt'):
         if batchCount >= kMAX_BATCHES:
             break
         # import code
@@ -156,7 +156,7 @@ for epoch in range(kNUM_EPOCHS):
         batchCount += 1
         print "yeahhh"
 
-    print("Epoch %d: Loss %g" % (epoch + 1, loss / len(training_data)))
+    print("Epoch %d: Loss %g" % (epoch + 1, loss / batchCount))
    
     vals = lasagne.layers.get_all_param_values(network)
     modelFile = open("modelStore/"+time.strftime("%m%d-%H%M%S")+".pkl", mode="w")    
@@ -171,4 +171,18 @@ for epoch in range(kNUM_EPOCHS):
 # use trained network for predictions
 test_prediction = lasagne.layers.get_output(network, deterministic=True)
 predict_fn = theano.function([sentence1, sentence2, mask1, mask2], T.argmax(test_prediction, axis=1))
-print(predict_fn(test_data)) #This might need to be changed
+total_classifications = 0
+total_correct = 0
+total_incorrect = 0
+for (batch1,m1), (batch2,m2), ys in dataIO.readChunk(kBATCH_SIZE, './snli_1.0/snli_1.0_dev.txt'):
+    if predict_fn(batch1, batch2, m1, m2) == ys:
+        total_correct += 1
+    else:
+        total_incorrect += 1
+    total_classifications += 1
+
+print "Total classifications: " + str(total_classifications)
+print "Total correct: " + str(total_correct)
+print "Total incorrect: " + str(total_incorrect)
+print "Accuracy: " + str(float(total_correct/classifications))
+
