@@ -14,7 +14,7 @@ kGRAD_CLIP = 100
 # How often should we check the output?
 kPRINT_FREQ = 1000
 # Number of epochs to train the net
-kNUM_EPOCHS = 10
+kNUM_EPOCHS = 20
 # Batch Size
 kBATCH_SIZE = 6
 
