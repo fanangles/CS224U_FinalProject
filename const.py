@@ -16,6 +16,6 @@ kPRINT_FREQ = 1000
 # Number of epochs to train the net
 kNUM_EPOCHS = 20
 # Batch Size
-kBATCH_SIZE = 6
+kBATCH_SIZE = 1
 
 kMAX_BATCHES = 100

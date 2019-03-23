@@ -32,7 +32,7 @@ def readData(filename):
         f.readline();
         for l in f:
             l=l.strip().split("\t")
-            yield sentence_to_onehots(l[3]), sentence_to_onehots(l[4]), golds[l[0]]
+            yield sentence_to_onehots(l[5]), sentence_to_onehots(l[6]), golds[l[0]]
 
 import itertools
 
